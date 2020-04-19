@@ -9,7 +9,19 @@ import {
   GET_USER,
   GET_REPOS,
 } from "../types";
-import githubContext from "./githubContext";
+
+let githubClientId;
+let githubClientSecret;
+
+if (process.env.NODE_ENV !== "production") {
+  githubClientId = process.env.REACT_APP_GITHUB_CLIENT_ID;
+  githubClientSecret = process.env.REACT_APP_GITHUB_CLIENT_SECRET;
+} else {
+  githubClientId = process.env.GITHUB_CLIENT_ID;
+  githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
+}
+
+//import githubContext from "./githubContext";
 
 const Githubstate = (props) => {
   const initialState = {
@@ -26,7 +38,7 @@ const Githubstate = (props) => {
     setLoading();
 
     const res = await axios.get(
-      `https://api.github.com/search/users?q=${text}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+      `https://api.github.com/search/users?q=${text}&client_id=${githubClientId}&client_secret=${githubClientSecret}`
     );
 
     dispatch({
@@ -39,7 +51,7 @@ const Githubstate = (props) => {
   const getUser = async (username) => {
     setLoading();
     const res = await axios.get(
-      `https://api.github.com/users/${username}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+      `https://api.github.com/users/${username}?client_id=${githubClientId}&client_secret=${githubClientSecret}`
     );
 
     dispatch({
@@ -52,7 +64,7 @@ const Githubstate = (props) => {
   const getUserRepos = async (username) => {
     setLoading(true);
     const res = await axios.get(
-      `https://api.github.com/users/${username}/repos?per_page=5&sort=created:ascclient&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+      `https://api.github.com/users/${username}/repos?per_page=5&sort=created:ascclient&client_id=${githubClientId}&client_secret=${githubClientSecret}`
     );
 
     dispatch({
@@ -70,7 +82,7 @@ const Githubstate = (props) => {
   const setLoading = () => dispatch({ type: SET_LOADING });
 
   return (
-    <githubContext.Provider
+    <GithubContext.Provider
       value={{
         users: state.users,
         user: state.user,
@@ -83,7 +95,7 @@ const Githubstate = (props) => {
       }}
     >
       {props.children}
-    </githubContext.Provider>
+    </GithubContext.Provider>
   );
 };
 
